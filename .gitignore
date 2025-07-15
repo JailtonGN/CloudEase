@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Logs
+log_*.txt
+
+# Configurações locais
+perfis.json
+.env
+*.db
+*.sqlite3
+
+# Outros
+*.swp
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db 
