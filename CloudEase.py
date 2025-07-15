@@ -627,37 +627,40 @@ class CloudEaseApp:
 
                 def read_stdout():
                     nonlocal stdout_lines_read
-                    for linha in iter(self.processo.stdout.readline, ''):
-                        stdout_lines_read += 1
-                        log.write(linha)
-                        self.janela.after(0, self.output_text.insert, tk.END, f"[Rclone] {linha}")
-                        self.janela.after(0, self.output_text.see, tk.END)
-                        
-                    self.processo.stdout.close()
+                    if self.processo and self.processo.stdout:
+                        for linha in iter(self.processo.stdout.readline, ''):
+                            stdout_lines_read += 1
+                            log.write(linha)
+                            self.janela.after(0, self.output_text.insert, tk.END, f"[Rclone] {linha}")
+                            self.janela.after(0, self.output_text.see, tk.END)
+                        self.processo.stdout.close()
 
                 def read_stderr():
                     nonlocal stderr_lines_read
-                    for linha in iter(self.processo.stderr.readline, ''):
-                        stderr_lines_read += 1
-                        log.write(f"[STDERR] {linha}")
-                        self.janela.after(0, self.output_text.insert, tk.END, f"[Rclone Erro/Aviso/Progresso] {linha}")
+                    if self.processo and self.processo.stderr:
+                        for linha in iter(self.processo.stderr.readline, ''):
+                            stderr_lines_read += 1
+                            log.write(f"[STDERR] {linha}")
+                            self.janela.after(0, self.output_text.insert, tk.END, f"[Rclone Erro/Aviso/Progresso] {linha}")
 
-                        transferido, total, porcentagem, velocidade, eta = extrair_stats_completos(linha)
-                        if transferido is not None:
-                            self.janela.after(0, self.transferido_var.set, f"Transferido: {transferido} MiB / {total} MiB")
-                            self.janela.after(0, self.velocidade_var.set, f"Velocidade: {velocidade}")
-                            # Atualiza o ETA formatado
-                            formatted_eta = self.format_eta(eta)
-                            self.janela.after(0, self.eta_var.set, formatted_eta)
-                            # Calcular e atualizar o tempo decorrido
-                            current_time = time.time()
-                            elapsed_duration = current_time - inicio
-                            elapsed_formatted = f"{int(elapsed_duration // 60)}m {int(elapsed_duration % 60)}s"
-                            self.janela.after(0, self.tempo_var.set, f"Tempo decorrido: {elapsed_formatted}")
-                            self.janela.after(0, self.progresso_var.set, float(porcentagem))
-                        
+                            transferido, total, porcentagem, velocidade, eta = extrair_stats_completos(linha)
+                            if transferido is not None:
+                                self.janela.after(0, self.transferido_var.set, f"Transferido: {transferido} MiB / {total} MiB")
+                                self.janela.after(0, self.velocidade_var.set, f"Velocidade: {velocidade}")
+                                formatted_eta = self.format_eta(eta)
+                                self.janela.after(0, self.eta_var.set, formatted_eta)
+                                current_time = time.time()
+                                elapsed_duration = current_time - inicio
+                                elapsed_formatted = f"{int(elapsed_duration // 60)}m {int(elapsed_duration % 60)}s"
+                                self.janela.after(0, self.tempo_var.set, f"Tempo decorrido: {elapsed_formatted}")
+                                # Corrigir: só converter porcentagem se não for None
+                                if porcentagem is not None:
+                                    try:
+                                        self.janela.after(0, self.progresso_var.set, float(porcentagem))
+                                    except Exception as e:
+                                        print(f"Erro ao converter porcentagem: {porcentagem} - {e}")
                         self.janela.after(0, self.output_text.see, tk.END)
-                    self.processo.stderr.close()
+                        self.processo.stderr.close()
 
                 stdout_thread = threading.Thread(target=read_stdout, daemon=True)
                 stderr_thread = threading.Thread(target=read_stderr, daemon=True)
@@ -674,8 +677,11 @@ class CloudEaseApp:
                 duracao = fim - inicio
                 tempo_formatado = f"{int(duracao // 60)}m {int(duracao % 60)}s"
 
-                if self.processo.returncode != 0:
-                    final_stderr_output_fallback = self.processo.stderr.read() 
+                if self.processo and self.processo.returncode != 0:
+                    # Corrigir: só ler stderr se self.processo.stderr não for None
+                    final_stderr_output_fallback = None
+                    if self.processo.stderr:
+                        final_stderr_output_fallback = self.processo.stderr.read() 
                     if final_stderr_output_fallback:
                         log.write("\n--- ERRO FINAL (fallback) ---\n")
                         log.write(final_stderr_output_fallback)
