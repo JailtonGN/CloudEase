@@ -199,7 +199,7 @@ class CloudEaseApp:
         self.radio_sync.grid(row=7, column=0, sticky="w")
 
         tk.Label(main_frame, text="📶 Limite de banda upload (Mbps):", font=("Segoe UI", 10, "bold")).grid(row=8, column=0, sticky="w", pady=(15, 0), columnspan=2)
-        self.bwlimit_options = ["Sem limite", "1", "5", "10", "25", "50", "100", "200", "500", "1000"]
+        self.bwlimit_options = ["Sem limite", "100", "200", "300", "400", "500", "600", "700", "800", "900", "1000"]
         self.entrada_bwlimit = ttk.Combobox(main_frame, values=self.bwlimit_options, width=20, state="readonly")
         self.entrada_bwlimit.set("Sem limite")
         self.entrada_bwlimit.grid(row=9, column=0, sticky="w", pady=5)
@@ -607,6 +607,8 @@ class CloudEaseApp:
 
             with open(log_nome, "w", encoding="utf-8") as log:
                 comando = ["rclone", modo, origem, destino, "--stats-one-line", "--stats", "1s", "--verbose"]
+                # Otimização automática de performance (ajustada para valores mais altos)
+                comando += ["--transfers=16", "--checkers=16", "--drive-chunk-size=256M"]  # Ajustado para tentar máxima performance
                 if is_dry_run:
                     comando.append("--dry-run")
                 
