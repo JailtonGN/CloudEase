@@ -1,0 +1,2 @@
+[STDERR] 2025/07/13 16:36:47 INFO  : There was nothing to transfer
+[STDERR] 2025/07/13 16:36:47 INFO  :           0 B / 0 B, -, 0 B/s, ETA -

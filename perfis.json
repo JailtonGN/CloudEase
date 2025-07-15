@@ -1,0 +1,14 @@
+{
+    "teste": {
+        "origem": "C:/Users/jailt/Videos/4K Video Downloader+",
+        "destino": "Teste",
+        "modo": "copy",
+        "bwlimit": "Sem limite"
+    },
+    "KONTAKT": {
+        "origem": "H:/KONTAKT",
+        "destino": "KONTAKT",
+        "modo": "sync",
+        "bwlimit": "Sem limite"
+    }
+}

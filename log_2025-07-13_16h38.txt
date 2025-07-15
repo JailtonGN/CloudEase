@@ -1,0 +1,4 @@
+[STDERR] 2025/07/13 16:38:16 INFO  :           0 B / 0 B, -, 0 B/s, ETA -
+[STDERR] 2025/07/13 16:38:16 INFO  : O Grande Amor Da Minha Vida.mp4: Deleted
+[STDERR] 2025/07/13 16:38:16 INFO  : There was nothing to transfer
+[STDERR] 2025/07/13 16:38:16 INFO  :           0 B / 0 B, -, 0 B/s, ETA -
